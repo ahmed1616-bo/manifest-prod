@@ -1,0 +1,109 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: resultat
+  namespace: esprit-portail-entreprise
+  labels:
+    app:  portail-entreprise
+    portail-entreprise.service: resultat
+spec:    
+  type: ClusterIP
+  ports:
+    - name: "http"
+      port: 1922
+      targetPort: 1922
+  selector:
+    app: portail-entreprise
+    portail-entreprise.service: resultat
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resultat
+  namespace: esprit-portail-entreprise
+  labels:
+    app: portail-entreprise
+    portail-entreprise.service: resultat
+spec:
+  replicas: 1
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: portail-entreprise
+      portail-entreprise.service: resultat
+  template:
+    metadata:
+      labels:
+        app: portail-entreprise
+        portail-entreprise.service: resultat
+    spec:
+      imagePullSecrets:
+        - name: harbor-creds1
+      serviceAccountName: esprit-app-sa
+      initContainers:
+      - name: vault-init
+        image: hashicorp/vault:1.15.0
+        command: 
+        - vault
+        - agent
+        - -config=/vault/config/esprit-agent.hcl
+        - -exit-after-auth
+        env:
+        - name: VAULT_ADDR
+          value: "http://vault.vault.svc.cluster.local:8200"
+        volumeMounts:
+        - name: vault-config-esprit
+          mountPath: /vault/config
+        - name: vault-secrets
+          mountPath: /vault/secrets      
+      containers:
+      - name: portail-resultat
+        image: harbor.pixelslabs.com/projetesprit/esprit-portail-entreprise_resultat:8eafba36d1040e717e1e7f3c2f07b83295c625dd
+        env:
+          - name: SPRING_PROFILES_ACTIVE
+            value: dev
+          - name: TZ
+            value: "Africa/Tunis"
+        command:
+        - sh
+        - -c
+        - |
+          echo "Loading secrets from Vault..."
+          if [ -f /vault/secrets/esprit.env ]; then
+            set -a  
+            . /vault/secrets/esprit.env
+            set +a
+            echo "Secrets loaded successfully!"
+          else
+            echo "ERROR: No secrets file found!"
+            exit 1
+          fi
+          exec java -cp opt/app:opt/app/lib/* com.dsi.resultatms.ResultatMsApplication
+        volumeMounts:
+        - name: vault-secrets
+          mountPath: /vault/secrets
+          readOnly: true
+        ports:
+        - containerPort: 1922
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 1922
+          initialDelaySeconds: 240
+          periodSeconds: 30
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 1922
+          initialDelaySeconds: 240
+          periodSeconds: 30
+          failureThreshold: 3
+      restartPolicy: Always
+      volumes:
+      - name: vault-config-esprit
+        configMap:
+          name: vault-config-esprit
+      - name: vault-secrets
+        emptyDir: {} 
+

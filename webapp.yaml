@@ -1,0 +1,107 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: esprit-portail-entreprise
+  namespace: esprit-portail-entreprise
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: portail-entreprise.esprit.local
+    http:
+      paths:
+      - backend:
+          service:
+            name: api-gateway
+            port:
+              number: 8222
+        path: /gw/(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: webapp
+            port:
+              number: 80
+        path: /(.*)
+        pathType: Prefix
+  - http:
+      paths:
+      - backend:
+          service:
+            name: api-gateway
+            port:
+              number: 8222
+        path: /gw/(.*)
+        pathType: Prefix
+      - backend:
+          service:
+            name: webapp
+            port:
+              number: 80
+        path: /(.*)
+        pathType: Prefix
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp
+  namespace: esprit-portail-entreprise
+  labels:
+    app:  portail-entreprise
+    portail-entreprise.service: webapp
+spec:    
+  type: ClusterIP
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 80
+  selector:
+    app: portail-entreprise
+    portail-entreprise.service: webapp
+
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp
+  namespace: esprit-portail-entreprise
+  labels:
+    app: portail-entreprise
+    portail-entreprise.service: webapp
+spec:
+  replicas: 2
+  revisionHistoryLimit: 0
+  selector:
+    matchLabels:
+      app: portail-entreprise
+      portail-entreprise.service: webapp
+  template:
+    metadata:
+      labels:
+        app: portail-entreprise
+        portail-entreprise.service: webapp
+        institute: esb
+    spec:
+      imagePullSecrets:
+        - name: harbor-creds1       
+      containers:
+      - name: portail-webapp
+        image: harbor.pixelslabs.com/projetesprit/esprit-portail-entreprise_webapp:be71a7e4fc15628453dc60e094cd47ed97c889bb
+        ports:
+        - containerPort: 80    
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 80
+          initialDelaySeconds: 15
+      restartPolicy: Always
