@@ -58,7 +58,7 @@ spec:
           mountPath: /vault/secrets  
       containers:
       - name: portail-inscription
-        image: harbor.pixelslabs.com/projetesprit/esprit-portail-entreprise_inscription:c074f1f30aba41b7b0f2e8d0a895af90a275d07f
+        image: harbor.pixelslabs.com/projetesprit/esprit-portail-entreprise_inscription:v1.1.0
         env:
           - name: SPRING_PROFILES_ACTIVE
             value: dev
