@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prometheus-scraping
+  namespace: esprit-portail-entreprise-prod
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: monitoring
+    ports:
+    - protocol: TCP
+      port: 1923  # absence
+    - protocol: TCP
+      port: 8222  # api-gateway
+    - protocol: TCP
+      port: 1919  # authentication
+    - protocol: TCP
+      port: 1921  # inscription
+    - protocol: TCP
+      port: 1925  # planning
+    - protocol: TCP
+      port: 1920  # profile
+    - protocol: TCP
+      port: 1922  # resultat
+    - protocol: TCP
+      port: 1926  # score
+    - protocol: TCP
+      port: 1924  # timetable
+    - protocol: TCP
+      port: 80    # webapp

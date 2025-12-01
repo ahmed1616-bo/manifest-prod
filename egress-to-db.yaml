@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-microservices-to-db
+  namespace: esprit-portail-entreprise-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: portail-entreprise
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: esprit-portail-entreprise
+          podSelector:
+            matchLabels:
+              app: portail-entreprise
+              portail-entreprise.service: database
+      ports:
+        - protocol: TCP
+          port: 5432

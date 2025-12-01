@@ -21,7 +21,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: absence
-  namespace: esprit-portail-entreprise
+  namespace: esprit-portail-entreprise-prod
   labels:
     app: portail-entreprise
     portail-entreprise.service: absence

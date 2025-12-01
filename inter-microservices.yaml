@@ -1,0 +1,75 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: microservices-netpol
+  namespace: esprit-portail-entreprise-prod
+spec:
+  podSelector:
+    matchLabels:
+      app: portail-entreprise
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: portail-entreprise
+      ports:
+        - protocol: TCP
+          port: 1923
+        - protocol: TCP
+          port: 1919
+        - protocol: TCP
+          port: 1921
+        - protocol: TCP
+          port: 1925
+        - protocol: TCP
+          port: 1920
+        - protocol: TCP
+          port: 1922
+        - protocol: TCP
+          port: 1926
+        - protocol: TCP
+          port: 1924
+        - protocol: TCP
+          port: 8222
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: portail-entreprise
+      ports:
+        - protocol: TCP
+          port: 1923
+        - protocol: TCP
+          port: 1919
+        - protocol: TCP
+          port: 1921
+        - protocol: TCP
+          port: 1925
+        - protocol: TCP
+          port: 1920
+        - protocol: TCP
+          port: 1922
+        - protocol: TCP
+          port: 1926
+        - protocol: TCP
+          port: 1924
+        - protocol: TCP
+          port: 8222
+    - to:
+        - podSelector: {}
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: vault
+      ports:
+        - protocol: TCP
+          port: 8200
+

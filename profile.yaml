@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: profile
-  namespace: esprit-portail-entreprise
+  namespace: esprit-portail-entreprise-prod
   labels:
     app:  portail-entreprise
     portail-entreprise.service: profile
@@ -20,7 +20,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: profile
-  namespace: esprit-portail-entreprise
+  namespace: esprit-portail-entreprise-prod
   labels:
     app: portail-entreprise
     portail-entreprise.service: profile
