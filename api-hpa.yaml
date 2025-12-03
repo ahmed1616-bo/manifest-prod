@@ -1,7 +1,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: apigateway-hpa
+  name: apigateway-hpa-prod
   namespace: esprit-portail-entreprise-prod
   labels:
     app: portail-entreprise

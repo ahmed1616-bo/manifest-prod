@@ -1,8 +1,8 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: resultat-hpa
-  namespace: esprit-portail-entreprise-dev
+  name: resultat-hpa-prod
+  namespace: esprit-portail-entreprise-prod
   labels:
     app: portail-entreprise
     component: autoscaler

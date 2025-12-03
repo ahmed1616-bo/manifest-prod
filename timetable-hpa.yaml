@@ -1,8 +1,8 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: timetable-hpa
-  namespace: esprit-portail-entreprise-dev
+  name: timetable-hpa-prod
+  namespace: esprit-portail-entreprise-prod
   labels:
     app: portail-entreprise
     component: autoscaler

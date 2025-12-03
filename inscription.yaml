@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: inscription
-  namespace: esprit-portail-entreprise
+  namespace: esprit-portail-entreprise-prod
   labels:
     app:  portail-entreprise
     portail-entreprise.service: inscription
@@ -20,7 +20,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: inscription
-  namespace: esprit-portail-entreprise
+  namespace: esprit-portail-entreprise-prod
   labels:
     app: portail-entreprise
     portail-entreprise.service: inscription
@@ -78,7 +78,7 @@ spec:
             echo "ERROR: No secrets file found!"
             exit 1
           fi
-          exec java -cp opt/app:opt/app/lib/* com.dsi.inscriptionms.InscriptionMsApplication
+          exec java -cp /opt/app:opt/app/lib/* com.dsi.inscriptionms.InscriptionMsApplication
         volumeMounts:
         - name: vault-secrets
           mountPath: /vault/secrets
