@@ -65,6 +65,9 @@ spec:
             value: dev
           - name: TZ
             value: "Africa/Tunis"
+        envFrom:
+          - configMapRef:
+              name: microservices-config-prod
         command:
         - sh
         - -c

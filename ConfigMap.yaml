@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: microservices-config-prod
+  namespace: esprit-portail-entreprise-prod
+data:
+  EUREKA_CLIENT_ENABLED: "false"
+  EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+  EUREKA_CLIENT_FETCH_REGISTRY: "false"
+  SPRING_CLOUD_DISCOVERY_ENABLED: "false"
