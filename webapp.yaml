@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: esprit-portail-entreprise
+  name: esprit-portail-entreprise-prod
   namespace: esprit-portail-entreprise-prod
   annotations:
     nginx.ingress.kubernetes.io/proxy-body-size: "1024m"
@@ -73,7 +73,7 @@ metadata:
     app: portail-entreprise
     portail-entreprise.service: webapp
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 0
   selector:
     matchLabels:
